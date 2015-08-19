@@ -18,6 +18,9 @@ var stringTestResults = []struct {
 	expectedStr   string
 	expectedError string
 }{
+	{"", "", ""},
+	{" ", "", ""},
+	{"\n", "", ""},
 	{"123", "123", ""},
 	{"-123", "-123", ""},
 	{"    abc\n", "abc", ""},
@@ -64,6 +67,9 @@ var numberTestResults = []struct {
 	{"    456    \n", 456, ""},
 	{"123x", 0, "Sorry I don't think that was a number. Try again..."},
 	{"abc", 0, "Sorry I don't think that was a number. Try again..."},
+	{"", 0, ""},
+	{" ", 0, "Sorry I don't think that was a number. Try again..."},
+	{"\n", 0, "Sorry I don't think that was a number. Try again..."},
 	{"1234456778909876543211234567890909876654332123434556787890", 0, "Sorry that number was too big. Try again..."},
 	{"-1234456778909876543211234567890909876654332123434556787890", 0, "Sorry that number was too small. Try again..."},
 }
@@ -107,6 +113,9 @@ var decimalFractionTestResults = []struct {
 	{"    0.69314    \n", 0.69314, ""},
 	{"123.x", 0, "Sorry I don't think that was a number. Try again..."},
 	{"abc.123", 0, "Sorry I don't think that was a number. Try again..."},
+	{"", 0, ""},
+	{" ", 0, "Sorry I don't think that was a number. Try again..."},
+	{"\n", 0, "Sorry I don't think that was a number. Try again..."},
 	{"123445677890987654321123456789090987665433212343455678789012344567789098765432112345678909098766543321234345567878901234456778909876543211234567890909876654332123434556787890123445677890987654321123456789090987665433212343455678789012344567789098765432112345678909098766543321234345567878901234456778909876543211234567890909876654332123434556787890.1234353", 0.0, "Sorry that number was too big. Try again..."},
 	{"-123445677890987654321123456789090987665433212343455678789012344567789098765432112345678909098766543321234345567878901234456778909876543211234567890909876654332123434556787890123445677890987654321123456789090987665433212343455678789012344567789098765432112345678909098766543321234345567878901234456778909876543211234567890909876654332123434556787890.211324325", 0.0, "Sorry that number was too small. Try again..."},
 }

@@ -49,7 +49,17 @@ func ReadNumberFromKeyboard() int {
 
 func readNumberFromKeyboard(scanner *bufio.Scanner) (int, string) {
 	var errorStr string
+	var scannerEmpty = true // assume the scanner is empty until proved otherwise
+
+	// scanner.Scan will return false when the scanner reads EOF. If the reader contains
+	// nothing i.e. an empty string was passed to the scanner. This is a problem,
+	// because we cannot distinguish between and empty string and the true EOF error.
+	// Remember scanner.Err() only returns errors that are not EOF.
+	// We need record is scanner.Scan worked at all. We use scannerEmpty for this.
 	for scanner.Scan() {
+		// scanner.Scan worked so the scanner is not empty. The string we read from the
+		// scanner was not "", even if TrimSpace is about to turns it into a ""
+		scannerEmpty = false
 		s := strings.TrimSpace(scanner.Text())
 		i, err := strconv.ParseInt(s, 10, 0)
 		if err != nil {
@@ -76,8 +86,16 @@ func readNumberFromKeyboard(scanner *bufio.Scanner) (int, string) {
 		return int(i), errorStr
 	}
 	// The scanner stopped. Why?
+	// This is the normal case - the scanned encountered an error - apart from EOF.
 	if err := scanner.Err(); err != nil {
 		errorStr = fmt.Sprintf("Sorry I could not scan the line. Error: %v. Try again...", err)
+	} else if !scannerEmpty {
+		// this is the abnormal case. The scanner read nothing. I nthis case scanner.Scan returned
+		// false, and scanner.Err() returns nil because EOF errors are ignored by scanner.Err().
+		// The only way to pick up this case is to use our scannerEmpty variable.
+		// If this is still true, the for loop never executed. We treat this as
+		//bad input and return the same error message.
+		errorStr = "Sorry I don't think that was a number. Try again..."
 	}
 	// in the case of an error we return zero
 	return 0, errorStr
@@ -93,7 +111,17 @@ func ReadDecimalFractionFromKeyboard() float64 {
 
 func readDecimalFractionFromKeyboard(scanner *bufio.Scanner) (float64, string) {
 	var errorStr string
+	var scannerEmpty = true // assume the scanner is empty until proved otherwise
+
+	// scanner.Scan will return false when the scanner reads EOF. If the reader contains
+	// nothing i.e. an empty string was passed to the scanner. This is a problem,
+	// because we cannot distinguish between and empty string and the true EOF error.
+	// Remember scanner.Err() only returns errors that are not EOF.
+	// We need record is scanner.Scan worked at all. We use scannerEmpty for this.
 	for scanner.Scan() {
+		// scanner.Scan worked so the scanner is not empty. The string we read from the
+		// scanner was not "", even if TrimSpace is about to turns it into a ""
+		scannerEmpty = false
 		s := strings.TrimSpace(scanner.Text())
 		f, err := strconv.ParseFloat(s, 64)
 		if err != nil {
@@ -121,6 +149,13 @@ func readDecimalFractionFromKeyboard(scanner *bufio.Scanner) (float64, string) {
 	// The scanner stoped. Why?
 	if err := scanner.Err(); err != nil {
 		errorStr = fmt.Sprintf("Sorry I could not scan the line. Error: %v. Try again...", err)
+	} else if !scannerEmpty {
+		// this is the abnormal case. The scanner read nothing. I nthis case scanner.Scan returned
+		// false, and scanner.Err() returns nil because EOF errors are ignored by scanner.Err().
+		// The only way to pick up this case is to use our scannerEmpty variable.
+		// If this is still true, the for loop never executed. We treat this as
+		// bad input and return the same error message.
+		errorStr = "Sorry I don't think that was a number. Try again..."
 	}
 	// in the case of an error we return 0.0
 	return 0.0, errorStr
