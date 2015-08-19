@@ -1,3 +1,23 @@
+// Copyright 2015 Kulawe Limited. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+/*
+Package simpleio provides a simplified interface for keyboard input.The package
+provides a simple way to read strings, integers and floating point numbers from
+the terminal keyboard. The package is intended to be used by young porgrammers
+who are beginning to learn to program using Go.
+
+Notes
+
+The package is not idomatic Go. The package is intended to be used by very
+young porgrammers with little experience of programming or Go. The package
+is intended to be used as a teaching aid and so the function signatures
+have been deliberatly simplified, compared to an idomatic Go version.
+
+The package is not go routing safe. Internally the package relies on a single,
+ungarded, global instance of bufio.Scanner, scanning from os.Stdin.
+*/
 package simpleio
 
 import (
@@ -14,6 +34,12 @@ func init() {
 	scanner = bufio.NewScanner(os.Stdin)
 }
 
+// ReadStringFromKeyboard reads a string that a user types in at the keyboard.
+// If there is no error the string is returned.
+// If the user types just a return, or one or more spaces, or one or or more tabs
+// then an empty string, "", is returned and no error message will be printed.
+// If there is an error, then the error message is printed to the console and
+// and empty string, "", is returned.
 func ReadStringFromKeyboard() string {
 	s, errorStr := readStringFromKeyboard(scanner)
 	if errorStr != "" {
@@ -39,6 +65,49 @@ func readStringFromKeyboard(scanner *bufio.Scanner) (string, string) {
 	return s, errorStr
 }
 
+// ReadNumberFromKeyboard reads an single decimal (base 10) integer number,
+// positive or negative, that a
+// user types in at the keyboard. Any leading or training white space will be
+// stripped before conversion to a number is attempted.
+// If there are no errors the number is returned as an int.
+//
+// If the input cannot be converted to an int, because the input is
+// badly formed e.g. contains letters, zero is returned and the message
+// 		Sorry I don't think that was a number. Try again...
+// is printed to the console.
+//
+// If the input cannot be converted to an int, because the input is to large
+// to be stored in an int type zero, is returned and the message
+// 		Sorry that number was too big. Try again...
+// is printed to the console.
+//
+// If the input cannot be converted to an int, because the input is to small
+// to be stored in an int type, zero is returned and the message
+// 		Sorry that number was too small. Try again...
+// is printed to the console.
+//
+// If the user types just a return, or one or more spaces, or one or more tabs
+// then this is considered an error condition and zero is returned and the error
+// message
+// 		Sorry I don't think that was a number. Try again...
+// will be printed.
+//
+// If the user attempts to type more than one number, separated by one ore more spaces
+// or tabs then the function returns zero and the error message
+// 		Sorry I don't think that was a number. Try again...
+// will be printed.
+//
+// Internally the function uses a bufio.Scanner (http://golang.org/pkg/bufio/#Scanner). If the scanner aborts early
+// for any reason (apart from EOF (End Of File) then the an error string of the form
+//		Sorry I could not scan the line. Error: <error-msg>. Try again...
+// where <error-msg> will be replaced with the reason why the scanner aborted.
+//
+// Notes
+//
+// The function will panic with the string
+//		The error type returned by strconv.ParseInt is NOT an *strconv.NumError!. This contradics the ParseInt docs.
+// if the error condition returned by strconv.ParseInt is not of type *strconv.NumError.
+// The panic will immediatly stop the programs execution if it occurs.
 func ReadNumberFromKeyboard() int {
 	i, s := readNumberFromKeyboard(scanner)
 	if s != "" {
@@ -101,6 +170,49 @@ func readNumberFromKeyboard(scanner *bufio.Scanner) (int, string) {
 	return 0, errorStr
 }
 
+// ReadDecimalFractionFromKeyboard reads an single decimal (base 10) fractional number,
+// positive or negative, that a
+// user types in at the keyboard. Any leading or training white space will be
+// stripped before conversion to a number is attempted.
+// If there are no errors the number is returned as an float64.
+//
+// If the input cannot be converted to an float64, because the input is
+// badly formed e.g. contains letters, 0.0 is returned and the message
+// 		Sorry I don't think that was a number. Try again...
+// is printed to the console.
+//
+// If the input cannot be converted to an float64, because the input is to large
+// to be stored in a float64 type 0.0, is returned and the message
+// 		Sorry that number was too big. Try again...
+// is printed to the console.
+//
+// If the input cannot be converted to an float64, because the input is to small
+// to be stored in a float64 type, 0.0 is returned and the message
+// 		Sorry that number was too small. Try again...
+// is printed to the console.
+//
+// If the user types just a return, or one or more spaces, or one or more tabs
+// then this is considered an error condition and 0.0 is returned and the error
+// message
+// 		Sorry I don't think that was a number. Try again...
+// will be printed.
+//
+// If the user attempts to type more than one number, separated by one ore more spaces
+// or tabs then the function returns 0.0 and the error message
+// 		Sorry I don't think that was a number. Try again...
+// will be printed.
+//
+// Internally the function uses a bufio.Scanner (http://golang.org/pkg/bufio/#Scanner). If the scanner aborts early
+// for any reason (apart from EOF (End Of File) then the an error string of the form
+//		Sorry I could not scan the line. Error: <error-msg>. Try again...
+// where <error-msg> will be replaced with the reason why the scanner aborted.
+//
+// Notes
+//
+// The function will panic with the string
+//		The error type returned by strconv.ParseFloat is NOT an *strconv.NumError!. This contradics the ParseInt docs.
+// if the error condition returned by strconv.ParseFloat is not of type *strconv.NumError.
+// The panic will immediatly stop the programs execution if it occurs.
 func ReadDecimalFractionFromKeyboard() float64 {
 	i, s := readDecimalFractionFromKeyboard(scanner)
 	if s != "" {
