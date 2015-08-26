@@ -63,6 +63,7 @@ var numberTestResults = []struct {
 }{
 	{"123", 123, ""},
 	{"123 456", 0, "Sorry I don't think that was a number. Try again..."},
+	{"12.3", 0, "Sorry I don't think that was a number. Try again..."},
 	{"-123", -123, ""},
 	{"    234\n", 234, ""},
 	{"345    \n", 345, ""},
@@ -110,6 +111,7 @@ var decimalFractionTestResults = []struct {
 }{
 	{"3.14", 3.14, ""},
 	{"-3.14", -3.14, ""},
+	{"3", 3.0, ""},
 	{"3.14 2.71828", 0.0, "Sorry I don't think that was a number. Try again..."},
 	{"    2.71828\n", 2.71828, ""},
 	{"1.4142    \n", 1.4142, ""},
