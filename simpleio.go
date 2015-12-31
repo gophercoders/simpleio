@@ -15,7 +15,7 @@ young porgrammers with little experience of programming or Go. The package
 is intended to be used as a teaching aid and so the function signatures
 have been deliberatly simplified, compared to an idomatic Go version.
 
-The package is not go routing safe. Internally the package relies on a single,
+The package is not go routine safe. Internally the package relies on a single,
 ungarded, global instance of bufio.Scanner, scanning from os.Stdin.
 */
 package simpleio
@@ -42,8 +42,9 @@ func init() {
 // and empty string, "", is returned.
 func ReadStringFromKeyboard() string {
 	s, errorStr := readStringFromKeyboard(scanner)
-	if errorStr != "" {
+	for errorStr != "" {
 		fmt.Println(errorStr)
+		s, errorStr = readStringFromKeyboard(scanner)
 	}
 	return s
 }
@@ -60,6 +61,7 @@ func readStringFromKeyboard(scanner *bufio.Scanner) (string, string) {
 	// The scanner stoped. Why?
 	if err := scanner.Err(); err != nil {
 		errorStr = fmt.Sprintf("Sorry I could not scan the line. Error: %v. Try again...", err)
+		s = ""
 	}
 	// in the case of an error we return the empty string.
 	return s, errorStr
@@ -110,8 +112,9 @@ func readStringFromKeyboard(scanner *bufio.Scanner) (string, string) {
 // The panic will immediatly stop the programs execution if it occurs.
 func ReadNumberFromKeyboard() int {
 	i, s := readNumberFromKeyboard(scanner)
-	if s != "" {
+	for s != "" {
 		fmt.Println(s)
+		i, s = readNumberFromKeyboard(scanner)
 	}
 	return i
 }
@@ -215,8 +218,9 @@ func readNumberFromKeyboard(scanner *bufio.Scanner) (int, string) {
 // The panic will immediatly stop the programs execution if it occurs.
 func ReadDecimalFractionFromKeyboard() float64 {
 	i, s := readDecimalFractionFromKeyboard(scanner)
-	if s != "" {
+	for s != "" {
 		fmt.Println(s)
+		i, s = readDecimalFractionFromKeyboard(scanner)
 	}
 	return i
 }
